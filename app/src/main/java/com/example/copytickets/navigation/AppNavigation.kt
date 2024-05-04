@@ -7,13 +7,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.copytickets.screens.LoginScreen
 import com.example.copytickets.screens.LogsScreen
 import com.example.copytickets.screens.ScannerScreen
+import com.example.copytickets.ui.login.ui.LoginViewModel
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route) {
         composable(route = AppScreens.LoginScreen.route) {
-            LoginScreen(navController)
+            LoginScreen(LoginViewModel(navController))
         }
         composable(route = AppScreens.ScannerScreen.route) {
             ScannerScreen(navController)
