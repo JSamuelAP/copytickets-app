@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.copytickets.ui.escaneos.data.Escaneo
 import com.example.copytickets.ui.escaneos.data.EscaneosRepository
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -26,4 +27,6 @@ class EscaneoViewModel(private val escaneosRepository: EscaneosRepository) : Vie
 
         escaneosRepository.insertLog(escaneo)
     }
+
+    fun getLogs(escaner: Int): Flow<List<Escaneo>> = escaneosRepository.getAllLogsStream(escaner)
 }

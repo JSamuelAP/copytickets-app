@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.example.copytickets.ui.escaneos.data.Escaneo
 import com.example.copytickets.ui.components.BottomBar
 import com.example.copytickets.ui.escaneos.ui.EscaneoViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -59,12 +62,7 @@ fun LogsContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val data = listOf(
-            Escaneo(1, 1, "26/04/2024", "21:00", "Aceptado"),
-            Escaneo(2, 1, "26/04/2024", "21:05", "Error"),
-            Escaneo(3, 1, "26/04/2024", "21:30", "Duplicado"),
-            Escaneo(4, 1, "26/04/2024", "22:10", "Rechazado")
-        )
+        val escaneos = viewModel.getLogs(1)
         Text(
             text = "Escaneos",
             style = MaterialTheme.typography.titleLarge,
@@ -80,18 +78,19 @@ fun LogsContent(
         }) {
             Text("Agregar escaneo")
         }
-        Table(escaneos = data)
+        Table(escaneos)
     }
 }
 
 @Composable
 fun Table(
-    escaneos: List<Escaneo>,
+    data: Flow<List<Escaneo>>,
     modifier: Modifier = Modifier
 ) {
+    val escaneos by data.collectAsState(initial = emptyList())
     val column1Weight = .4f
-    val column2Weight = .4f
-    val column3Weight = .2f
+    val column2Weight = .3f
+    val column3Weight = .3f
 
     LazyColumn(
         modifier
@@ -136,7 +135,7 @@ fun RowScope.TableCell(
         text = text,
         fontWeight = if (heading) FontWeight.Bold else FontWeight.Normal,
         color = when (text) {
-            "Aceptado" -> Color.Green
+            "Aceptado" -> Color(53, 151, 57, 255)
             "Error", "Duplicado", "Rechazado" -> MaterialTheme.colorScheme.error
             else -> MaterialTheme.colorScheme.onSurface
         },

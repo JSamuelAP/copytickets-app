@@ -31,7 +31,7 @@ class LoginViewModel(val navController: NavController) : ViewModel() {
 
     suspend fun onLogin() {
         _isLoading.value = true
-        delay(3000)
+        delay(2000)
         navController.navigate(route = AppScreens.ScannerScreen.route)
         _isLoading.value = false
     }
