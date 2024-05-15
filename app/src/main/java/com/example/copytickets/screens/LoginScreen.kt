@@ -51,7 +51,7 @@ fun LoginContent(
     val usuario: String by viewModel.usuario.observeAsState(initial = "")
     val password: String by viewModel.password.observeAsState(initial = "")
     val loginEnabled: Boolean by viewModel.loginEnabled.observeAsState(initial = false)
-    val isLoading: Boolean by viewModel.isLoadng.observeAsState(initial = false)
+    val isLoading: Boolean by viewModel.isLoading.observeAsState(initial = false)
 
     val coroutineScope = rememberCoroutineScope()
 
