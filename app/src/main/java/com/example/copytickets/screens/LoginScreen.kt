@@ -1,5 +1,6 @@
 package com.example.copytickets.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -52,6 +56,7 @@ fun LoginContent(
     val password: String by viewModel.password.observeAsState(initial = "")
     val loginEnabled: Boolean by viewModel.loginEnabled.observeAsState(initial = false)
     val isLoading: Boolean by viewModel.isLoading.observeAsState(initial = false)
+    val resMessage = viewModel.resMessage.value
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,6 +83,26 @@ fun LoginContent(
                 { coroutineScope.launch { viewModel.onLogin() } },
                 modifier
             )
+            if (resMessage.isNotBlank()) {
+                Spacer(modifier.height(8.dp))
+                OutlinedCard(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                    ),
+                    shape = RoundedCornerShape(4.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                    modifier = Modifier
+                        .width(300.dp)
+                ) {
+                    Box(modifier.padding(8.dp).width(300.dp)) {
+                        Text(
+                            text = resMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            }
         }
     }
 }
