@@ -24,7 +24,11 @@ fun BottomBar(navController: NavController) {
         actions = {
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = {
-                navController.navigate(route = AppScreens.LoginScreen.route)
+                navController.navigate(route = AppScreens.LoginScreen.route) {
+                    // Al hacer logout no se puede volver a las pantallas anteriores con el botón
+                    // atras. Para entrar se debe volver a iniciar sesión
+                    popUpTo(0) { inclusive = true }
+                }
             }) {
                 Icon(Icons.Filled.ExitToApp, contentDescription = "Logout")
             }
@@ -45,7 +49,7 @@ fun BottomBar(navController: NavController) {
     )
 }
 
-@Preview()
+@Preview
 @Composable
 fun BottomBarPreview() {
     BottomBar(navController = rememberNavController())

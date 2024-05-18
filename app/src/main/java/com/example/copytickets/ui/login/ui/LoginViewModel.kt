@@ -59,7 +59,11 @@ class LoginViewModel(private val navController: NavController) : ViewModel() {
                         resMessage.value = res.message
                     }
                     withContext(Main) {
-                        navController.navigate(route = AppScreens.ScannerScreen.route)
+                        navController.navigate(route = AppScreens.ScannerScreen.route) {
+                            // Al hacer login, no se puede volver a la pantalla de login con el
+                            // boton atras, solo se podrá con el boton logout
+                            popUpTo(AppScreens.LoginScreen.route) { inclusive = true }
+                        }
                     }
                 } else {
                     responseService.errorBody()?.let { error ->
