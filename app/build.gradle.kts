@@ -76,6 +76,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences-android:1.1.1")
 
     testImplementation("junit:junit:4.13.2")
 

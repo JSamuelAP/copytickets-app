@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.copytickets.navigation.AppScreens
+import com.example.copytickets.ui.login.data.DataStoreRepository
 import com.example.copytickets.ui.login.data.LoginBodyDTO
 import com.example.copytickets.ui.login.data.LoginResponseDTO
 import com.example.copytickets.ui.login.data.RetrofitHelper
@@ -17,7 +18,10 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginViewModel(private val navController: NavController) : ViewModel() {
+class LoginViewModel(
+    private val navController: NavController,
+    private val repository: DataStoreRepository
+) : ViewModel() {
     private val _usuario = MutableLiveData<String>()
     val usuario: LiveData<String> = _usuario
 
@@ -57,6 +61,10 @@ class LoginViewModel(private val navController: NavController) : ViewModel() {
                     responseService.body()?.let { res ->
                         Log.d("Logging", "token: ${res.accessToken}")
                         resMessage.value = res.message
+                        repository.saveScannerData(
+                            res.escaner?.id.orEmpty(),
+                            res.accessToken.orEmpty()
+                        )
                     }
                     withContext(Main) {
                         navController.navigate(route = AppScreens.ScannerScreen.route) {

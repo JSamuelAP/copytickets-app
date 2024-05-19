@@ -10,23 +10,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.copytickets.ui.components.BottomBar
+import com.example.copytickets.ui.login.data.DataStoreRepository
 
 @Composable
-fun ScannerScreen(navController: NavController) {
+fun ScannerScreen(
+    navController: NavController,
+    repository: DataStoreRepository
+) {
     Scaffold(
         bottomBar = { BottomBar(navController) }
     ) { innerPadding ->
-        ScannerContent(navController, innerPadding)
+        ScannerContent(innerPadding)
     }
 }
 
 @Composable
 fun ScannerContent(
-    navController: NavController,
     innerPadding: PaddingValues
 ) {
     Column(
@@ -38,10 +39,4 @@ fun ScannerContent(
     ) {
         Text("Escanear QR")
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ScannerScreenPreview() {
-    ScannerScreen(navController = rememberNavController())
 }

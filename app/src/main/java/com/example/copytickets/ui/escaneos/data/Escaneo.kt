@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "escaneos")
 data class Escaneo(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "escaner") val escaner: Int,
+    @ColumnInfo(name = "escaner") val escaner: String,
     @ColumnInfo(name = "fecha") val fecha: String,
     @ColumnInfo(name = "hora") val hora: String,
     @ColumnInfo(name = "resultado") val resultado: String

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EscaneoDao {
     @Query("SELECT * FROM escaneos WHERE escaner = :escaner")
-    fun getAllLogs(escaner: Int): Flow<List<Escaneo>>
+    fun getAllLogs(escaner: String): Flow<List<Escaneo>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(escaneo: Escaneo)

@@ -164,9 +164,3 @@ fun LoginButton(
         Text("Iniciar sesión")
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(LoginViewModel(rememberNavController()))
-}

@@ -9,7 +9,7 @@ interface EscaneosRepository {
     /**
      * Obtener todos los escaneos realizados por un usuario escaner.
      */
-    fun getAllLogsStream(escaner: Int): Flow<List<Escaneo>>
+    fun getAllLogsStream(escaner: String): Flow<List<Escaneo>>
 
     /**
      * Insertar un nuevo registro de escaneo en la fuente de datos.

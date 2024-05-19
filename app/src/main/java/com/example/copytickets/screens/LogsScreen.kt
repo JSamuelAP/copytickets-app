@@ -1,6 +1,7 @@
 package com.example.copytickets.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,6 +39,7 @@ import com.example.copytickets.ui.components.BottomBar
 import com.example.copytickets.ui.escaneos.ui.EscaneoViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.forEach
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -62,7 +65,7 @@ fun LogsContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val escaneos = viewModel.getLogs(1)
+        val escaneos = viewModel.getLogs()
         Text(
             text = "Escaneos",
             style = MaterialTheme.typography.titleLarge,
@@ -73,7 +76,7 @@ fun LogsContent(
         // TODO: Eliminar este boton, solo es temporal para simular escaneos
         Button(onClick = {
             coroutineScope.launch {
-                viewModel.saveLog(1, "Aceptado")
+                viewModel.saveLog("Aceptado")
             }
         }) {
             Text("Agregar escaneo")
@@ -142,16 +145,5 @@ fun RowScope.TableCell(
         modifier = Modifier
             .weight(weight)
             .padding(8.dp)
-    )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun LogsScreenPreview() {
-    val application = LocalContext.current.applicationContext as EscaneosApplication
-    LogsScreen(
-        EscaneoViewModel(application.container.escaneosRepository),
-        navController = rememberNavController()
     )
 }
