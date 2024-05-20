@@ -4,6 +4,17 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
+buildscript{
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies{
+        classpath("com.google.gms:google-services:4.3.10")
+    }
+}
+
 android {
     namespace = "com.example.copytickets"
     compileSdk = 34
@@ -78,6 +89,15 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     // DataStore
     implementation("androidx.datastore:datastore-preferences-android:1.1.1")
+    // MLKit para leer los QR
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    // CamaraX para manejar el uso de la camara
+    implementation("androidx.camera:camera-camera2:1.3.3")
+    implementation("androidx.camera:camera-lifecycle:1.3.3")
+    implementation("androidx.camera:camera-view:1.3.3")
+    implementation("androidx.camera:camera-extensions:1.3.3")
+    // Accompanist para controlar permisos de camara
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     testImplementation("junit:junit:4.13.2")
 

@@ -20,8 +20,8 @@ import com.example.copytickets.ui.theme.CopyTicketsTheme
  * Docente: Suarez y Gómez Luis Fernando
  * Alumnos:
  *      - Aldana Pérez José Samuel
- *      - Arellano Christian ??
- *      - Eduardo Pedroza Prieto ??
+ *      - Arellano Fuentes Cristian Yael
+ *      - Pedroza Prieto Carlos Eduardo
  *
  * Proyecto final: CopyTickets
  * App que permite escanear códigos de boletos QR para dar acceso a eventos.

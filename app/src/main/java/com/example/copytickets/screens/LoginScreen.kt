@@ -62,7 +62,8 @@ fun LoginContent(
 
     if (isLoading) {
         Box(modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier.align(Alignment.Center))
+            //TODO: Crashea la app al realizar el indicador de progreso
+            //CircularProgressIndicator(modifier.align(Alignment.Center))
         }
     } else {
         Column(
