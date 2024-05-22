@@ -13,6 +13,7 @@ import com.example.copytickets.screens.LoginScreen
 import com.example.copytickets.screens.LogsScreen
 import com.example.copytickets.screens.ScannerScreen
 import com.example.copytickets.ui.escaneos.ui.EscaneoViewModel
+import com.example.copytickets.ui.escaner.ui.EscanerViewModel
 import com.example.copytickets.ui.login.data.DataStoreRepository
 import com.example.copytickets.ui.login.ui.LoginViewModel
 
@@ -28,7 +29,7 @@ fun AppNavigation() {
             LoginScreen(LoginViewModel(navController, dataStoreRepository))
         }
         composable(route = AppScreens.ScannerScreen.route) {
-            ScannerScreen(navController, dataStoreRepository)
+            ScannerScreen(EscanerViewModel(dataStoreRepository), navController, dataStoreRepository)
         }
         composable(route = AppScreens.LogsScreen.route) {
             LogsScreen(

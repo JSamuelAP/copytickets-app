@@ -42,17 +42,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.copytickets.navigation.AppScreens
 import com.example.copytickets.ui.components.BottomBar
-import com.example.copytickets.ui.escaneos.ReconocimientoQR
+import com.example.copytickets.ui.escaner.ReconocimientoQR
+import com.example.copytickets.ui.escaner.ui.EscanerViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -62,6 +61,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ScannerScreen(
+    viewModel: EscanerViewModel,
     navController: NavController,
     repository: DataStoreRepository
 ){
@@ -81,7 +81,7 @@ fun ScannerScreen(
 
     var permisosSolicitados = remember { mutableStateOf(false) }
     if(estadoPermisosCamara.status.isGranted){ //Permisos activos
-        CamaraScreen(navController)
+        CamaraScreen(navController, viewModel)
     } else {
         LaunchedEffect(permisosSolicitados) {
             //Mostrar solicitud de permisos
@@ -91,12 +91,12 @@ fun ScannerScreen(
 }
 
 @Composable
-fun CamaraScreen(navController: NavController){
+fun CamaraScreen(navController: NavController, viewModel: EscanerViewModel){
     val context: Context = LocalContext.current
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val cameraController: LifecycleCameraController = remember { LifecycleCameraController(context) }
 
-    CamaraContent(navController, lifecycleOwner, cameraController)
+    CamaraContent(navController, lifecycleOwner, cameraController, viewModel)
 }
 
 @Composable
@@ -104,6 +104,7 @@ private fun CamaraContent(
     navController: NavController,
     lifecycleOwner: LifecycleOwner? = null,
     cameraController: LifecycleCameraController? = null,
+    viewModel: EscanerViewModel
 ) {
     var deteccion: String by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -114,6 +115,7 @@ private fun CamaraContent(
     fun onSuccessfulDetection(contenidoQR: String) {
         deteccion = contenidoQR
         scope.launch {
+            val res = viewModel.onScan("1")
             //Cerrar mensaje previo si existe
             snackbarHostState.currentSnackbarData?.dismiss()
             //Mostrar nuevo mensaje
@@ -216,8 +218,10 @@ private fun iniciarReconocimiento(
     previewView.controller = cameraController
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun ScannerScreenPreview() {
     CamaraContent(navController = rememberNavController())
 }
+*/

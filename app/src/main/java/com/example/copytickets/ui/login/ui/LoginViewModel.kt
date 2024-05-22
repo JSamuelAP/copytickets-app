@@ -11,7 +11,7 @@ import com.example.copytickets.navigation.AppScreens
 import com.example.copytickets.ui.login.data.DataStoreRepository
 import com.example.copytickets.ui.login.data.LoginBodyDTO
 import com.example.copytickets.ui.login.data.LoginResponseDTO
-import com.example.copytickets.ui.login.data.RetrofitHelper
+import com.example.copytickets.data.RetrofitHelper
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main

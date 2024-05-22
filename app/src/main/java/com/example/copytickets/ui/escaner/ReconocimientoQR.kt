@@ -1,4 +1,4 @@
-package com.example.copytickets.ui.escaneos
+package com.example.copytickets.ui.escaner
 
 import android.media.Image
 import androidx.camera.core.ExperimentalGetImage
