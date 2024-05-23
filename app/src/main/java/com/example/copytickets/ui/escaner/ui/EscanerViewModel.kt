@@ -28,24 +28,26 @@ class EscanerViewModel(
     }
 
     suspend fun onScan(id: String): EscanearResponseDTO {
+        var response = EscanearResponseDTO("", null)
         try {
             val escanerService = RetrofitHelper.getEscanerService(_token.value.orEmpty())
             val responseService = escanerService.escanear(id)
 
-            if(responseService.isSuccessful) {
-                responseService.body()?.let { res->
+            if (responseService.isSuccessful) {
+                responseService.body()?.let { res ->
                     Log.d("Scanner", "${res.message} - ${res.numEntradas}")
-                    return res
+                    response = res
                 }
             } else {
                 responseService.errorBody()?.let { error ->
                     val res = Gson().fromJson(error.string(), EscanearResponseDTO::class.java)
                     Log.d("Scanner", res.message)
-                    return res
+                    response = res
                 }
             }
-        } catch(e: Exception) {
-            return EscanearResponseDTO("ERROR", null)
+        } catch (e: Exception) {
+            response = EscanearResponseDTO("ERROR", null)
         }
+        return response
     }
 }

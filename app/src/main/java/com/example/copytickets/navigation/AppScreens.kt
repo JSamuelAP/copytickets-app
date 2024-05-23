@@ -5,7 +5,7 @@ package com.example.copytickets.navigation
  * Cada pantalla se indica como un objeto y su ruta asociada.
  */
 sealed class AppScreens(val route: String) {
-    object LoginScreen: AppScreens("login")
-    object ScannerScreen: AppScreens("scanner")
-    object LogsScreen: AppScreens("logs")
+    data object LoginScreen: AppScreens("login")
+    data object ScannerScreen: AppScreens("scanner")
+    data object LogsScreen: AppScreens("logs")
 }

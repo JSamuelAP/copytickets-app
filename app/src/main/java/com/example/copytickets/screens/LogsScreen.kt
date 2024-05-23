@@ -1,8 +1,5 @@
 package com.example.copytickets.screens
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,34 +11,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.copytickets.EscaneosApplication
 import com.example.copytickets.ui.escaneos.data.Escaneo
 import com.example.copytickets.ui.components.BottomBar
 import com.example.copytickets.ui.escaneos.ui.EscaneoViewModel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.forEach
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LogsScreen(viewModel: EscaneoViewModel, navController: NavController) {
     Scaffold(
@@ -51,13 +38,11 @@ fun LogsScreen(viewModel: EscaneoViewModel, navController: NavController) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LogsContent(
     viewModel: EscaneoViewModel,
     innerPadding: PaddingValues
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .padding(innerPadding)
@@ -73,14 +58,6 @@ fun LogsContent(
                 .padding(top = 48.dp, start = 32.dp)
                 .align(Alignment.Start)
         )
-        // TODO: Eliminar este boton, solo es temporal para simular escaneos
-        Button(onClick = {
-            coroutineScope.launch {
-                viewModel.saveLog("Aceptado")
-            }
-        }) {
-            Text("Agregar escaneo")
-        }
         Table(escaneos)
     }
 }
@@ -138,8 +115,8 @@ fun RowScope.TableCell(
         text = text,
         fontWeight = if (heading) FontWeight.Bold else FontWeight.Normal,
         color = when (text) {
-            "Aceptado" -> Color(53, 151, 57, 255)
-            "Error", "Duplicado", "Rechazado" -> MaterialTheme.colorScheme.error
+            "ACEPTADO" -> Color(53, 151, 57, 255)
+            "ERROR", "DUPLICADO", "RECHAZADO" -> MaterialTheme.colorScheme.error
             else -> MaterialTheme.colorScheme.onSurface
         },
         modifier = Modifier

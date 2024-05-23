@@ -11,7 +11,6 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import com.example.copytickets.ui.login.data.DataStoreRepository
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,10 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +46,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.copytickets.navigation.AppScreens
 import com.example.copytickets.ui.components.BottomBar
+import com.example.copytickets.ui.components.MyAlertDialog
+import com.example.copytickets.ui.escaneos.ui.EscaneoViewModel
 import com.example.copytickets.ui.escaner.ReconocimientoQR
 import com.example.copytickets.ui.escaner.ui.EscanerViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -62,26 +60,26 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScannerScreen(
     viewModel: EscanerViewModel,
+    db: EscaneoViewModel,
     navController: NavController,
-    repository: DataStoreRepository
-){
+) {
     //Recordar si se han dado permisos de camara anteriormente
-    val estadoPermisosCamara: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+    val estadoPermisosCamara: PermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     //Launcher de la solicitud con comportamiento acorde a la decisión del usuario
     val solicitudLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ){  permisoAceptado ->
-        if(permisoAceptado){
+    ) { permisoAceptado ->
+        if (permisoAceptado) {
             navController.navigate(route = AppScreens.ScannerScreen.route)
         } else {
             navController.navigate(route = AppScreens.LogsScreen.route)
         }
     }
 
-    var permisosSolicitados = remember { mutableStateOf(false) }
-    if(estadoPermisosCamara.status.isGranted){ //Permisos activos
-        CamaraScreen(navController, viewModel)
+    val permisosSolicitados = remember { mutableStateOf(false) }
+    if (estadoPermisosCamara.status.isGranted) { //Permisos activos
+        CamaraScreen(navController, viewModel, db)
     } else {
         LaunchedEffect(permisosSolicitados) {
             //Mostrar solicitud de permisos
@@ -91,12 +89,13 @@ fun ScannerScreen(
 }
 
 @Composable
-fun CamaraScreen(navController: NavController, viewModel: EscanerViewModel){
+fun CamaraScreen(navController: NavController, viewModel: EscanerViewModel, db: EscaneoViewModel) {
     val context: Context = LocalContext.current
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
-    val cameraController: LifecycleCameraController = remember { LifecycleCameraController(context) }
+    val cameraController: LifecycleCameraController =
+        remember { LifecycleCameraController(context) }
 
-    CamaraContent(navController, lifecycleOwner, cameraController, viewModel)
+    CamaraContent(navController, lifecycleOwner, cameraController, viewModel, db)
 }
 
 @Composable
@@ -104,42 +103,52 @@ private fun CamaraContent(
     navController: NavController,
     lifecycleOwner: LifecycleOwner? = null,
     cameraController: LifecycleCameraController? = null,
-    viewModel: EscanerViewModel
+    viewModel: EscanerViewModel,
+    db: EscaneoViewModel
 ) {
     var deteccion: String by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var show by rememberSaveable { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf("") }
 
     //Callback tras una lectura de QR exitosa
-    //TODO: registrar lectura en la base de datos
     fun onSuccessfulDetection(contenidoQR: String) {
         deteccion = contenidoQR
-        scope.launch {
-            val res = viewModel.onScan("1")
-            //Cerrar mensaje previo si existe
-            snackbarHostState.currentSnackbarData?.dismiss()
-            //Mostrar nuevo mensaje
-            val resultado = snackbarHostState
-                .showSnackbar(
-                    message = deteccion,
-                    actionLabel = "Ver",
-                    duration = SnackbarDuration.Indefinite
-                )
-            when(resultado){
-                SnackbarResult.ActionPerformed -> { //Al pulsar "Ver"
-                    //TODO: Mostrar dialogo con info del qr?
+        if (isValidID(deteccion)) {
+            scope.launch {
+                val res = viewModel.onScan(deteccion)
+                title = res.message
+                text = when (title) {
+                    "ACEPTADO" -> "Acceso valido para ${res.numEntradas} personas"
+                    "DUPLICADO" -> "Este boleto ya fue escaneado"
+                    "RECHAZADO" -> "No se pudo reconocer el QR"
+                    else -> "Hubo un error al escanear el QR, contactese con el administrador"
                 }
-                SnackbarResult.Dismissed -> {
-                }
+                show = true
+                db.saveLog(title)
+            }
+
+        } else {
+            scope.launch {
+                title = "RECHAZADO"
+                text = "QR no válido para CopyTickets"
+                show = true
+                db.saveLog(title)
             }
         }
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomBar(navController) },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        bottomBar = { BottomBar(navController) }
     ) { paddingValues: PaddingValues ->
+        MyAlertDialog(
+            title = title,
+            text = text,
+            show = show,
+            onDismiss = { show = false }
+        )
         Column {
             Text(
                 modifier = Modifier
@@ -175,7 +184,8 @@ private fun CamaraContent(
 fun CamaraView(
     lifecycleOwner: LifecycleOwner? = null,
     cameraController: LifecycleCameraController? = null,
-    onSuccessfulDetection: (String) -> Unit){
+    onSuccessfulDetection: (String) -> Unit
+) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
@@ -216,6 +226,15 @@ private fun iniciarReconocimiento(
 
     cameraController.bindToLifecycle(lifecycleOwner)
     previewView.controller = cameraController
+}
+
+fun isValidID(value: String): Boolean {
+    return try {
+        val intValue = value.toInt()
+        intValue > 0
+    } catch (e: NumberFormatException) {
+        false
+    }
 }
 
 /*

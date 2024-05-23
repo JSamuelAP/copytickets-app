@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -31,10 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.example.copytickets.R
 import com.example.copytickets.ui.login.ui.LoginViewModel
 import kotlinx.coroutines.launch
@@ -62,8 +59,7 @@ fun LoginContent(
 
     if (isLoading) {
         Box(modifier.fillMaxSize()) {
-            //TODO: Crashea la app al realizar el indicador de progreso
-            //CircularProgressIndicator(modifier.align(Alignment.Center))
+            Text("Cargando...")
         }
     } else {
         Column(

@@ -44,8 +44,8 @@ class ReconocimientoQR(private val onSuccessfulDetection: (String) -> Unit) : Im
                 reconocedorQR.process(inputImage)
                     .addOnSuccessListener {barcodes: List<Barcode> ->
                         //Considerar solo el primer código reconocido cuando hay varios en pantalla
-                        if(!barcodes.isEmpty()){
-                            var resultado: String? = barcodes[0].rawValue
+                        if(barcodes.isNotEmpty()){
+                            val resultado: String? = barcodes[0].rawValue
                             if (resultado!!.isNotBlank()) {
                                 onSuccessfulDetection(resultado) //Callback definido en ScannerScreen
                             }
