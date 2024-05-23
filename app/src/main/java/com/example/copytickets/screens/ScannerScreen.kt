@@ -109,11 +109,14 @@ private fun CamaraContent(
     var deteccion: String by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     var show by rememberSaveable { mutableStateOf(false) }
+    var block by rememberSaveable { mutableStateOf(false) }
     var title by rememberSaveable { mutableStateOf("") }
     var text by rememberSaveable { mutableStateOf("") }
 
     //Callback tras una lectura de QR exitosa
     fun onSuccessfulDetection(contenidoQR: String) {
+        if (block) return
+        block = true
         deteccion = contenidoQR
         if (isValidID(deteccion)) {
             scope.launch {
@@ -147,7 +150,10 @@ private fun CamaraContent(
             title = title,
             text = text,
             show = show,
-            onDismiss = { show = false }
+            onDismiss = {
+                show = false
+                block = false
+            }
         )
         Column {
             Text(
