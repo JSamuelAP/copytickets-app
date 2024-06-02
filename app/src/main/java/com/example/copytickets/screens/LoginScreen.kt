@@ -91,7 +91,10 @@ fun LoginContent(
                     modifier = Modifier
                         .width(300.dp)
                 ) {
-                    Box(modifier.padding(8.dp).width(300.dp)) {
+                    Box(
+                        modifier
+                            .padding(8.dp)
+                            .width(300.dp)) {
                         Text(
                             text = resMessage,
                             color = MaterialTheme.colorScheme.error,

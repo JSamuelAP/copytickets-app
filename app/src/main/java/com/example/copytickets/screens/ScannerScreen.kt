@@ -118,27 +118,17 @@ private fun CamaraContent(
         if (block) return
         block = true
         deteccion = contenidoQR
-        if (isValidID(deteccion)) {
-            scope.launch {
-                val res = viewModel.onScan(deteccion)
-                title = res.message
-                text = when (title) {
-                    "ACEPTADO" -> "Acceso valido para ${res.numEntradas} personas"
-                    "DUPLICADO" -> "Este boleto ya fue escaneado"
-                    "RECHAZADO" -> "No se pudo reconocer el QR"
-                    else -> "Hubo un error al escanear el QR, contactese con el administrador"
-                }
-                show = true
-                db.saveLog(title)
+        scope.launch {
+            val res = viewModel.onScan()
+            title = res.message
+            text = when (title) {
+                "ACEPTADO" -> "Acceso valido para ${res.numEntradas} personas"
+                "DUPLICADO" -> "Este boleto ya fue escaneado"
+                "RECHAZADO" -> "No se pudo reconocer el QR"
+                else -> "Hubo un error al escanear el QR, contactese con el administrador"
             }
-
-        } else {
-            scope.launch {
-                title = "RECHAZADO"
-                text = "QR no válido para CopyTickets"
-                show = true
-                db.saveLog(title)
-            }
+            show = true
+            db.saveLog(title)
         }
     }
 
@@ -233,20 +223,3 @@ private fun iniciarReconocimiento(
     cameraController.bindToLifecycle(lifecycleOwner)
     previewView.controller = cameraController
 }
-
-fun isValidID(value: String): Boolean {
-    return try {
-        val intValue = value.toInt()
-        intValue > 0
-    } catch (e: NumberFormatException) {
-        false
-    }
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-private fun ScannerScreenPreview() {
-    CamaraContent(navController = rememberNavController())
-}
-*/

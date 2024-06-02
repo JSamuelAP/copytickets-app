@@ -1,6 +1,5 @@
 package com.example.copytickets.ui.login.ui
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,19 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.copytickets.navigation.AppScreens
-import com.example.copytickets.ui.login.data.DataStoreRepository
-import com.example.copytickets.ui.login.data.LoginBodyDTO
-import com.example.copytickets.ui.login.data.LoginResponseDTO
-import com.example.copytickets.data.RetrofitHelper
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginViewModel(
-    private val navController: NavController,
-    private val repository: DataStoreRepository
+    private val navController: NavController
 ) : ViewModel() {
     private val _usuario = MutableLiveData<String>()
     val usuario: LiveData<String> = _usuario
@@ -33,8 +27,6 @@ class LoginViewModel(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-
-    private val loginRequestLiveData = MutableLiveData<Boolean>()
     val resMessage = mutableStateOf(value = "")
 
     fun onLoginChanged(usuario: String, password: String) {
@@ -50,43 +42,13 @@ class LoginViewModel(
         viewModelScope.launch(IO) {
             withContext(Main) {
                 _isLoading.value = true
-            }
-            try {
-                val authService = RetrofitHelper.getAuthService()
-                val responseService = authService.getLogin(
-                    LoginBodyDTO(_usuario.value!!, _password.value!!
-                ))
-
-                if(responseService.isSuccessful) {
-                    responseService.body()?.let { res ->
-                        Log.d("Logging", "token: ${res.accessToken}")
-                        resMessage.value = res.message
-                        repository.saveScannerData(
-                            res.escaner?.id.orEmpty(),
-                            res.accessToken.orEmpty()
-                        )
-                    }
-                    withContext(Main) {
-                        navController.navigate(route = AppScreens.ScannerScreen.route) {
-                            // Al hacer login, no se puede volver a la pantalla de login con el
-                            // boton atras, solo se podrá con el boton logout
-                            popUpTo(AppScreens.LoginScreen.route) { inclusive = true }
-                        }
-                    }
-                } else {
-                    responseService.errorBody()?.let { error ->
-                        val res = Gson().fromJson(error.string(), LoginResponseDTO::class.java)
-                        resMessage.value = res.message
-                        Log.d("Logging", "error: ${res.message}")
-                    }
+                delay(1000)
+                navController.navigate(route = AppScreens.ScannerScreen.route) {
+                    // Al hacer login, no se puede volver a la pantalla de login con el
+                    // boton atras, solo se podrá con el boton logout
+                    popUpTo(AppScreens.LoginScreen.route) { inclusive = true }
                 }
-                loginRequestLiveData.postValue(responseService.isSuccessful)
-            } catch (e: Exception) {
-                Log.d("Loggin", "Error de autentication", e)
-            } finally {
-                withContext(Main) {
-                    _isLoading.value = false
-                }
+                _isLoading.value = false
             }
         }
     }
